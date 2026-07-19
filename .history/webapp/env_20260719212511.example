@@ -1,2 +1,2 @@
-PORT=5173
+PORT=8000
 VITE_BACKEND_TRPC_URL=http://localhost:3000/trpc
