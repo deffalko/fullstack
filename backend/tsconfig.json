@@ -5,10 +5,14 @@
   },
   "compilerOptions": {
     "plugins": [{ "transform": "typescript-transform-paths" }],
+    // "paths": {
+    //   "@ideanick/webapp/*": ["../webapp/*"]
+    // },
     "paths": {
-      "@ideanick/webapp/*": ["../webapp/*"]
+      "@ideanick/webapp/*": ["../webapp/src/*"]
     },
     "outDir": "./dist",
+    "rootDir": "./src",
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "downlevelIteration": true,
@@ -25,6 +29,7 @@
     "lib": ["ES2021"],
     "module": "commonjs",
     "moduleResolution": "Node",
+    "ignoreDeprecations": "6.0",
     "target": "ES2021"
   },
   "include": ["src"]
