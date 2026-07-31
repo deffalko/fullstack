@@ -1,15 +1,16 @@
 import cors from 'cors'
+import { env } from './lib/env'
 import express from 'express'
 import { createAppContext, type AppContext } from './lib/ctx'
-import { env } from './lib/env'
 import { applyPassportToExpressApp } from './lib/passport'
 import { applyTrpcToExpressApp } from './lib/trpc'
 import { trpcRouter } from './router'
 import { presetDb } from './scripts/presetDb'
 import { sendWelcomeEmail, sendIdeaBlockedEmail } from './lib/emails'
+import { applyCron } from './lib/cron'
+import { logger } from './lib/logger'
 
 // Убираем лишний app здесь и используем только один
-// const app = express() // ❌ УДАЛИТЕ ЭТУ СТРОКУ
 
 void (async () => {
   let ctx: AppContext | null = null
@@ -88,14 +89,18 @@ void (async () => {
     applyPassportToExpressApp(expressApp, ctx)
     await applyTrpcToExpressApp(expressApp, ctx, trpcRouter)
 
+    applyCron(ctx)
+
     // Запуск сервера
     expressApp.listen(env.PORT, () => {
-      console.info(`🚀 Listening at http://localhost:${env.PORT}`)
+      // console.info(`🚀 Listening at http://localhost:${env.PORT}`)
+      logger.info('express', `🚀 Listening at http://localhost:${env.PORT}`)
       console.info(`📧 Test email endpoint: http://localhost:${env.PORT}/api/test-email`)
       console.info(`🏥 Health check: http://localhost:${env.PORT}/ping`)
     })
   } catch (error) {
-    console.error(error)
+    // console.error(error)
+    logger.error('app', error)
     await ctx?.stop()
   }
 })()

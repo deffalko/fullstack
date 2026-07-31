@@ -1,0 +1,11 @@
+{
+  "extends": "../backend/tsconfig.json",
+  "include": ["src"],
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "types": ["node"],
+    "composite": false
+  },
+  "exclude": ["node_modules", "dist"]
+}

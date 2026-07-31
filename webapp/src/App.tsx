@@ -13,6 +13,7 @@ import { EditIdeaPage } from './pages/ideas/EditIdeaPage'
 import { NewIdeaPage } from './pages/ideas/NewIdeaPage'
 import { ViewIdeaPage } from './pages/ideas/ViewIdeaPage'
 import { NotFoundPage } from './pages/other/NotFoundPage'
+import { NotAuthRouteTracker } from './components/NotAuthRouteTracker'
 import './styles/global.scss'
 
 export const App = () => {
@@ -21,16 +22,17 @@ export const App = () => {
       <TrpcProvider>
         <AppContextProvider>
           <BrowserRouter>
+            <NotAuthRouteTracker />
             <Routes>
-              <Route path={routes.getSignOutRoute()} element={<SignOutPage />} />
+              <Route path={routes.getSignOutRoute.definition} element={<SignOutPage />} />
               <Route element={<Layout />}>
-                <Route path={routes.getSignUpRoute()} element={<SignUpPage />} />
-                <Route path={routes.getSignInRoute()} element={<SignInPage />} />
-                <Route path={routes.getAllIdeasRoute()} element={<AllIdeasPage />} />
-                <Route path={routes.getNewIdeaRoute()} element={<NewIdeaPage />} />
-                <Route path={routes.getEditProfileRoute()} element={<EditProfilePage />} />
-                <Route path={routes.getViewIdeaRoute(routes.viewIdeaRouteParams)} element={<ViewIdeaPage />} />
-                <Route path={routes.getEditIdeaRoute(routes.editIdeaRouteParams)} element={<EditIdeaPage />} />
+                <Route path={routes.getSignUpRoute.definition} element={<SignUpPage />} />
+                <Route path={routes.getSignInRoute.definition} element={<SignInPage />} />
+                <Route path={routes.getEditProfileRoute.definition} element={<EditProfilePage />} />
+                <Route path={routes.getAllIdeasRoute.definition} element={<AllIdeasPage />} />
+                <Route path={routes.getViewIdeaRoute.definition} element={<ViewIdeaPage />} />
+                <Route path={routes.getEditIdeaRoute.definition} element={<EditIdeaPage />} />
+                <Route path={routes.getNewIdeaRoute.definition} element={<NewIdeaPage />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Route>
             </Routes>

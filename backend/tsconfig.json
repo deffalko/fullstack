@@ -5,11 +5,9 @@
   },
   "compilerOptions": {
     "plugins": [{ "transform": "typescript-transform-paths" }],
-    // "paths": {
-    //   "@ideanick/webapp/*": ["../webapp/*"]
-    // },
     "paths": {
-      "@ideanick/webapp/*": ["../webapp/src/*"]
+      "@ideanick/webapp/*": ["../webapp/src/*"],
+      "@ideanick/shared/*": ["../shared/src/*"]
     },
     "outDir": "./dist",
     "rootDir": "./src",

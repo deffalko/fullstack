@@ -5,8 +5,9 @@ import fg from 'fast-glob'
 import Handlebars from 'handlebars'
 import _ from 'lodash'
 import { sendEmailThroughBrevo } from './brevo'
-import { getNewIdeaRoute } from '@ideanick/webapp/src/lib/routes'
+import { getNewIdeaRoute, getViewIdeaRoute } from '@ideanick/webapp/src/lib/routes'
 import { env } from './env'
+import { winstonLogger } from './logger'
 
 const getHbrTemplates = _.memoize(async () => {
   try {
@@ -243,7 +244,7 @@ const sendEmail = async ({
 
     const { loggableResponse } = await sendEmailThroughBrevo({ to, html, subject })
 
-    console.info('✅ sendEmail успешно отправлен', {
+    winstonLogger.info('email', '✅ sendEmail успешно отправлен', {
       to,
       templateName,
       templateVariables,
@@ -252,7 +253,11 @@ const sendEmail = async ({
 
     return { ok: true }
   } catch (error) {
-    console.error('❌ Ошибка в sendEmail:', error)
+    winstonLogger.error('email', error, {
+      to,
+      templateName,
+      templateVariables,
+    })
     return { ok: false, error: error instanceof Error ? error.message : 'Unknown error' }
   }
 }
@@ -265,7 +270,7 @@ export const sendWelcomeEmail = async ({ user }: { user: Pick<User, 'nick' | 'em
     templateName: 'welcome',
     templateVariables: {
       userNick: user.nick,
-      addIdeaUrl: `${env.WEBAPP_URL}${getNewIdeaRoute}`,
+      addIdeaUrl: `${getNewIdeaRoute({ abs: true })}`,
     },
   })
 }
@@ -278,6 +283,23 @@ export const sendIdeaBlockedEmail = async ({ user, idea }: { user: Pick<User, 'e
     templateName: 'ideaBlocked',
     templateVariables: {
       ideaNick: idea.nick,
+    },
+  })
+}
+
+export const sendMostLikedIdeasEmail = async ({
+  user,
+  ideas,
+}: {
+  user: Pick<User, 'email'>
+  ideas: Array<Pick<Idea, 'nick' | 'name'>>
+}) => {
+  return await sendEmail({
+    to: user.email,
+    subject: 'Most Liked Ideas!',
+    templateName: 'mostLikedIdeas',
+    templateVariables: {
+      ideas: ideas.map((idea) => ({ name: idea.name, url: getViewIdeaRoute({ abs: true, ideaNick: idea.nick }) })),
     },
   })
 }

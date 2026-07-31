@@ -1,5 +1,6 @@
 import { z } from 'zod'
+import { zStringRequired } from '@ideanick/shared/src/zod'
 
 export const zBlockIdeaTrpcInput = z.object({
-  ideaId: z.string().min(1),
+  ideaId: zStringRequired,
 })
