@@ -4,6 +4,8 @@ import { useMemo, useState } from 'react'
 import { type z } from 'zod'
 import { type AlertProps } from '../components/Alert'
 import { type ButtonProps } from '../components/Button'
+import { TRPCClientError } from '@trpc/client'
+import { useRollbarError } from './rollbar' // Добавляем импорт
 
 export const useForm = <TZodSchema extends z.ZodTypeAny>({
   successMessage = false,
@@ -23,6 +25,9 @@ export const useForm = <TZodSchema extends z.ZodTypeAny>({
   const [successMessageVisible, setSuccessMessageVisible] = useState(false)
   const [submittingError, setSubmittingError] = useState<Error | null>(null)
 
+  // Получаем функцию для отправки ошибок
+  const captureError = useRollbarError()
+
   const formik = useFormik<z.infer<TZodSchema>>({
     initialValues,
     ...(validationSchema && { validate: withZodSchema(validationSchema) }),
@@ -41,6 +46,13 @@ export const useForm = <TZodSchema extends z.ZodTypeAny>({
           setSuccessMessageVisible(false)
         }, 3000)
       } catch (error: any) {
+        console.log('🔴 [FORM ERROR]', error)
+
+        // Отправляем в Rollbar только если это не TRPC ошибка
+        // TRPC ошибки уже отправляются в customTrpcLink
+        if (!(error instanceof TRPCClientError)) {
+          captureError(error)
+        }
         setSubmittingError(error)
       }
     },

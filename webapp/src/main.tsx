@@ -1,10 +1,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { App } from './App.tsx'
+import { App } from './App'
+import { RollbarProvider } from './RollbarProvider'
+import './styles/global.scss'
 
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+console.log('🚀 Application started')
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App />
+    <RollbarProvider>
+      <App />
+    </RollbarProvider>
   </React.StrictMode>
 )

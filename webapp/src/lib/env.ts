@@ -2,8 +2,11 @@ import { z } from 'zod'
 import { zEnvNonemptyTrimmed } from '../../../shared/src/zod'
 
 export const zEnv = z.object({
+  NODE_ENV: z.enum(['development', 'production']),
+  VITE_ROLLBAR_ACCESS_TOKEN: zEnvNonemptyTrimmed,
   VITE_BACKEND_TRPC_URL: zEnvNonemptyTrimmed,
   VITE_WEBAPP_URL: zEnvNonemptyTrimmed,
+  VITE_WEBAPP_ROLLBAR_DSN: z.string().optional(), // Добавляем
 })
 
 // eslint-disable-next-line node/no-process-env

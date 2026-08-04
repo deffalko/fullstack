@@ -15,6 +15,7 @@ import { ViewIdeaPage } from './pages/ideas/ViewIdeaPage'
 import { NotFoundPage } from './pages/other/NotFoundPage'
 import { NotAuthRouteTracker } from './components/NotAuthRouteTracker'
 import './styles/global.scss'
+import { useEffect } from 'react'
 
 export const App = () => {
   return (

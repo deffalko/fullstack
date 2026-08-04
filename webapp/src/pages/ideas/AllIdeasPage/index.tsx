@@ -21,6 +21,7 @@ export const AllIdeasPage = withPageWrapper({
     initialValues: { search: '' },
     validationSchema: zGetIdeasTrpcInput.pick({ search: true }),
   })
+
   const search = useDebounce(formik.values.search, 500)
   const { data, error, isLoading, isError, hasNextPage, fetchNextPage, isFetchingNextPage, isRefetching } =
     trpc.getIdeas.useInfiniteQuery(

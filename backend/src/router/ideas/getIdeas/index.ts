@@ -1,8 +1,8 @@
 import _ from 'lodash'
-import { trpc } from '../../../lib/trpc'
+import { trpcLoggedProcedure } from '../../../lib/trpc'
 import { zGetIdeasTrpcInput } from './input'
 
-export const getIdeasTrpcRoute = trpc.procedure.input(zGetIdeasTrpcInput).query(async ({ ctx, input }) => {
+export const getIdeasTrpcRoute = trpcLoggedProcedure.input(zGetIdeasTrpcInput).query(async ({ ctx, input }) => {
   // 1. Очищаем поисковый запрос
   const search = input.search?.trim() || ''
 
