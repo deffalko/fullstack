@@ -2,3 +2,5 @@ packages:
   - backend
   - webapp
   - shared
+allowBuilds:
+  '@sentry/cli': false

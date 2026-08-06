@@ -5,7 +5,7 @@ import { type z } from 'zod'
 import { type AlertProps } from '../components/Alert'
 import { type ButtonProps } from '../components/Button'
 import { TRPCClientError } from '@trpc/client'
-import { useRollbarError } from './rollbar' // Добавляем импорт
+import { useRollbarError } from './RollbarProvider' // Добавляем импорт
 
 export const useForm = <TZodSchema extends z.ZodTypeAny>({
   successMessage = false,

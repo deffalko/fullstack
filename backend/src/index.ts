@@ -10,8 +10,6 @@ import { sendWelcomeEmail, sendIdeaBlockedEmail } from './lib/emails'
 import { applyCron } from './lib/cron'
 import { logger } from './lib/logger'
 
-// Убираем лишний app здесь и используем только один
-
 void (async () => {
   let ctx: AppContext | null = null
   try {
@@ -102,7 +100,6 @@ void (async () => {
 
     // Запуск сервера
     expressApp.listen(env.PORT, () => {
-      // console.info(`🚀 Listening at http://localhost:${env.PORT}`)
       logger.info('express', `🚀 Listening at http://localhost:${env.PORT}`)
       console.info(`📧 Test email endpoint: http://localhost:${env.PORT}/api/test-email`)
       console.info(`🏥 Health check: http://localhost:${env.PORT}/ping`)
@@ -113,33 +110,3 @@ void (async () => {
     await ctx?.stop()
   }
 })()
-
-// import cors from 'cors'
-// import express from 'express'
-// import { createAppContext, type AppContext } from './lib/ctx'
-// import { env } from './lib/env'
-// import { applyPassportToExpressApp } from './lib/passport'
-// import { applyTrpcToExpressApp } from './lib/trpc'
-// import { trpcRouter } from './router'
-// import { presetDb } from './scripts/presetDb'
-
-// void (async () => {
-//   let ctx: AppContext | null = null
-//   try {
-//     ctx = createAppContext()
-//     await presetDb(ctx)
-//     const expressApp = express()
-//     expressApp.use(cors())
-//     expressApp.get('/ping', (req, res) => {
-//       res.send('pong')
-//     })
-//     applyPassportToExpressApp(expressApp, ctx)
-//     await applyTrpcToExpressApp(expressApp, ctx, trpcRouter)
-//     expressApp.listen(env.PORT, () => {
-//       console.info(`Listening at http://localhost:${env.PORT}`)
-//     })
-//   } catch (error) {
-//     console.error(error)
-//     await ctx?.stop()
-//   }
-// })()

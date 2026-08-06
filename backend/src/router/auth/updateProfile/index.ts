@@ -9,6 +9,7 @@ export const updateProfileTrpcRoute = trpcLoggedProcedure
     if (!ctx.me) {
       throw new Error('UNAUTHORIZED')
     }
+
     if (ctx.me.nick !== input.nick) {
       const exUser = await ctx.prisma.user.findUnique({
         where: {

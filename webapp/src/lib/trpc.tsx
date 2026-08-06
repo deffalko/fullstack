@@ -6,7 +6,7 @@ import Cookies from 'js-cookie'
 import superjson from 'superjson'
 import { env } from './env'
 import { observable } from '@trpc/server/observable'
-import { rollbarCaptureException } from './rollbar'
+import { rollbarCaptureException } from './RollbarProvider'
 
 export const trpc = createTRPCReact<TrpcRouter>()
 
