@@ -1,4 +1,5 @@
-import crypto from 'crypto'
+// import crypto from 'crypto'
+import * as crypto from 'crypto'
 import { env } from '../lib/env'
 
 export const getPasswordHash = (password: string) => {

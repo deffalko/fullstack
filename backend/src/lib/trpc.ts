@@ -9,12 +9,15 @@ import { type AppContext } from './ctx'
 import { logger } from './logger'
 import { ExpectedError } from './error'
 
-const getCreateTrpcContext =
+export const getTrpcContext = ({ appContext, req }: { appContext: AppContext; req: ExpressRequest }) => ({
+  ...appContext,
+  me: req.user || null,
+})
+
+export const getCreateTrpcContext =
   (appContext: AppContext) =>
-  ({ req }: trpcExpress.CreateExpressContextOptions) => ({
-    ...appContext,
-    me: (req as ExpressRequest).user || null,
-  })
+  ({ req }: trpcExpress.CreateExpressContextOptions) =>
+    getTrpcContext({ appContext, req: req as ExpressRequest })
 
 type TrpcContext = inferAsyncReturnType<ReturnType<typeof getCreateTrpcContext>>
 
@@ -50,7 +53,9 @@ export const trpcLoggedProcedure = trpc.procedure.use(
     if (result.ok) {
       logger.info(`trpc:${type}:success`, 'Successfull request', { ...meta, output: result.data })
     } else {
-      logger.error(`trpc:${type}:error`, result.error, meta)
+      // ✅ Используем result.error напрямую с утверждением типа
+      logger.error(`trpc:${type}:error`, (result as any).error, meta)
+      // logger.error(`trpc:${type}:error`, result.error, meta)
     }
     return result
   })

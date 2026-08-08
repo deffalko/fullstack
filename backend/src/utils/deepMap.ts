@@ -1,4 +1,5 @@
-import _ from 'lodash'
+// import _ from 'lodash'
+import * as _ from 'lodash'
 
 type ReplaceFn = ({ path, key, value }: { path: string; key: string; value: Value }) => Value
 type Value = Object | number | string | boolean | null | undefined | Function | Symbol | any[]

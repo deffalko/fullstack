@@ -9,10 +9,12 @@ import { presetDb } from './scripts/presetDb'
 import { sendWelcomeEmail, sendIdeaBlockedEmail } from './lib/emails'
 import { applyCron } from './lib/cron'
 import { logger } from './lib/logger'
+import { initRollbar } from './lib/rollbar'
 
 void (async () => {
   let ctx: AppContext | null = null
   try {
+    initRollbar()
     ctx = createAppContext()
     await presetDb(ctx)
 

@@ -1,64 +1,71 @@
 import Rollbar from 'rollbar'
 import dotenv from 'dotenv'
-// import path from 'path'  // ← УДАЛИТЕ эту строку (она не используется)
 
 dotenv.config()
 
 const ROLLBAR_ACCESS_TOKEN = process.env.ROLLBAR_SERVER_ACCESS_TOKEN
 const SOURCE_VERSION = process.env.SOURCE_VERSION || '1.0.0'
 
-export const rollbar = new Rollbar({
-  accessToken: ROLLBAR_ACCESS_TOKEN || 'MISSING_TOKEN',
-  captureUncaught: true,
-  captureUnhandledRejections: true,
-  environment: process.env.HOST_ENV || 'local',
-  payload: {
-    client: {
-      javascript: {
-        source_map_enabled: true,
-        code_version: SOURCE_VERSION,
-      },
-    },
-    code_version: SOURCE_VERSION,
-    server: {
-      host: process.env.HOSTNAME || 'localhost',
-      root: process.cwd(),
-    },
-  },
-})
+let rollbarInstance: Rollbar | null = null
 
-// Функция для отправки ошибок
-export const rollbarError = (error: Error | string, metadata?: any) => {
-  if (!ROLLBAR_ACCESS_TOKEN) {
-    console.warn('⚠️ ROLLBAR_SERVER_ACCESS_TOKEN not set, skipping Rollbar log')
+export const initRollbar = () => {
+  const isRollbarEnabled = ROLLBAR_ACCESS_TOKEN
+
+  if (isRollbarEnabled) {
+    rollbarInstance = new Rollbar({
+      accessToken: ROLLBAR_ACCESS_TOKEN,
+      captureUncaught: true,
+      captureUnhandledRejections: true,
+      environment: process.env.HOST_ENV || 'local',
+      payload: {
+        client: {
+          javascript: {
+            source_map_enabled: true,
+            code_version: SOURCE_VERSION,
+          },
+        },
+        code_version: SOURCE_VERSION,
+        server: {
+          host: process.env.HOSTNAME || 'localhost',
+          root: process.cwd(),
+        },
+      },
+    })
+  }
+}
+
+export const rollbarCaptureException = (error: Error | string, metadata?: Record<string, unknown>) => {
+  if (!rollbarInstance) {
     return
   }
 
   if (typeof error === 'string') {
-    rollbar.error(error, metadata)
+    rollbarInstance.error(error, metadata)
   } else {
-    rollbar.error(error, metadata)
+    rollbarInstance.error(error, metadata)
   }
 }
 
-// Функция для отправки ошибок с дополнительным контекстом
-export const rollbarErrorWithContext = (error: Error, context: Record<string, any>, metadata?: any) => {
-  if (!ROLLBAR_ACCESS_TOKEN) return
+export const rollbarCaptureExceptionWithContext = (
+  error: Error,
+  context: Record<string, unknown>,
+  metadata?: Record<string, unknown>
+) => {
+  if (!rollbarInstance) return
 
   const enhancedError = new Error(error.message)
   enhancedError.stack = error.stack
-  ;(enhancedError as any).context = context
+  Object.assign(enhancedError, { context })
 
-  rollbar.error(enhancedError, { ...metadata, context })
+  rollbarInstance.error(enhancedError, { ...metadata, context })
 }
 
-// Middleware для Express
 export const rollbarMiddleware = (err: any, req: any, res: any, next: any) => {
-  if (!ROLLBAR_ACCESS_TOKEN) {
+  if (!rollbarInstance) {
     return next(err)
   }
 
-  rollbar.error(err, {
+  rollbarInstance.error(err, {
     request: {
       method: req.method,
       url: req.url,
@@ -74,16 +81,19 @@ export const rollbarMiddleware = (err: any, req: any, res: any, next: any) => {
   next(err)
 }
 
-// Обработчик для TRPC ошибок
-export const rollbarTrpcError = (error: unknown, context?: Record<string, any>) => {
-  if (!ROLLBAR_ACCESS_TOKEN) return
+export const rollbarTrpcError = (error: unknown, context?: Record<string, unknown>) => {
+  if (!rollbarInstance) return
 
   const err = error instanceof Error ? error : new Error(String(error))
 
-  rollbar.error(err, {
+  rollbarInstance.error(err, {
     trpc: true,
     ...context,
   })
 }
 
-export default rollbar
+// Экспортируем экземпляр для прямого доступа (опционально)
+export const getRollbarInstance = () => rollbarInstance
+
+// Для обратной совместимости
+export default rollbarInstance

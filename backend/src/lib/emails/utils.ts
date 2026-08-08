@@ -1,15 +1,19 @@
 import { promises as fs } from 'fs'
-import path from 'path'
-import { type Idea, type User } from '@prisma/client'
-import fg from 'fast-glob'
-import Handlebars from 'handlebars'
-import _ from 'lodash'
-import { sendEmailThroughBrevo } from './brevo'
-import { getNewIdeaRoute, getViewIdeaRoute } from '@ideanick/webapp/src/lib/routes'
-import { env } from './env'
-import { winstonLogger } from './logger'
+import { sendEmailThroughBrevo } from '../brevo'
+import { env } from '../env'
+import { winstonLogger } from '../logger'
+import * as path from 'path'
+import * as fg from 'fast-glob'
+import * as Handlebars from 'handlebars'
+import * as _ from 'lodash'
 
-const getHbrTemplates = _.memoize(async () => {
+// Типы для переменных шаблонов
+type TemplateVariables = Record<string, any>
+
+/**
+ * Мемоизированная загрузка всех Handlebars шаблонов из папки emails/dist
+ */
+const getHbrTemplates = _.memoize(async (): Promise<Record<string, HandlebarsTemplateDelegate>> => {
   try {
     // ПРОБУЕМ НЕСКОЛЬКО ВАРИАНТОВ ПУТЕЙ
     const possiblePaths = [
@@ -34,7 +38,7 @@ const getHbrTemplates = _.memoize(async () => {
           console.log(`✅ Найдены шаблоны в: ${templatesDir}`)
           break
         }
-      } catch (error) {
+      } catch {
         // Папка не существует, пробуем следующую
         continue
       }
@@ -78,6 +82,7 @@ const getHbrTemplates = _.memoize(async () => {
         console.log(`✅ Шаблон ${templateName} успешно скомпилирован`)
       } catch (compileError) {
         console.error(`❌ Ошибка компиляции шаблона ${templateName}:`, compileError)
+        // Запасной вариант — пустой шаблон
         hbrTemplates[templateName] = Handlebars.compile('<p>Template not available</p>')
       }
     }
@@ -89,10 +94,10 @@ const getHbrTemplates = _.memoize(async () => {
   }
 })
 
-const getEmailHtml = async (
-  templateName: string,
-  templateVariables: Record<string, string | number | boolean> = {}
-) => {
+/**
+ * Генерация HTML для письма по имени шаблона
+ */
+const getEmailHtml = async (templateName: string, templateVariables: TemplateVariables = {}): Promise<string> => {
   try {
     const hbrTemplates = await getHbrTemplates()
 
@@ -117,7 +122,7 @@ const getEmailHtml = async (
           const result = compiled(templateVariables)
           console.log(`✅ Шаблон ${templateName} загружен напрямую`)
           return result
-        } catch (accessError) {
+        } catch {
           // Файл не существует
           continue
         }
@@ -142,8 +147,10 @@ const getEmailHtml = async (
   }
 }
 
-// Функция для создания красивого fallback HTML
-const createFallbackHtml = (templateName: string, variables: Record<string, any>) => {
+/**
+ * Функция для создания красивого fallback HTML, если шаблон не найден
+ */
+const createFallbackHtml = (templateName: string, variables: TemplateVariables): string => {
   if (templateName === 'welcome') {
     return `
       <!DOCTYPE html>
@@ -213,10 +220,14 @@ const createFallbackHtml = (templateName: string, variables: Record<string, any>
     `
   }
 
+  // Общий fallback
   return `<h1>Template ${templateName}</h1><p>Variables: ${JSON.stringify(variables)}</p>`
 }
 
-const sendEmail = async ({
+/**
+ * Основная функция отправки email с использованием Handlebars шаблонов
+ */
+export const sendEmail = async ({
   to,
   subject,
   templateName,
@@ -225,8 +236,8 @@ const sendEmail = async ({
   to: string
   subject: string
   templateName: string
-  templateVariables?: Record<string, any>
-}) => {
+  templateVariables?: TemplateVariables
+}): Promise<{ ok: boolean; error?: string }> => {
   try {
     const fullTemplateVariables = {
       ...templateVariables,
@@ -253,141 +264,12 @@ const sendEmail = async ({
 
     return { ok: true }
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     winstonLogger.error('email', error, {
       to,
       templateName,
       templateVariables,
     })
-    return { ok: false, error: error instanceof Error ? error.message : 'Unknown error' }
+    return { ok: false, error: errorMessage }
   }
 }
-
-export const sendWelcomeEmail = async ({ user }: { user: Pick<User, 'nick' | 'email'> }) => {
-  console.log(`📧 Отправка welcome email для пользователя: ${user.email}`)
-  return await sendEmail({
-    to: user.email,
-    subject: 'Thanks For Registration!',
-    templateName: 'welcome',
-    templateVariables: {
-      userNick: user.nick,
-      addIdeaUrl: `${getNewIdeaRoute({ abs: true })}`,
-    },
-  })
-}
-
-export const sendIdeaBlockedEmail = async ({ user, idea }: { user: Pick<User, 'email'>; idea: Pick<Idea, 'nick'> }) => {
-  console.log(`📧 Отправка idea blocked email для пользователя: ${user.email}`)
-  return await sendEmail({
-    to: user.email,
-    subject: 'Your Idea Blocked!',
-    templateName: 'ideaBlocked',
-    templateVariables: {
-      ideaNick: idea.nick,
-    },
-  })
-}
-
-export const sendMostLikedIdeasEmail = async ({
-  user,
-  ideas,
-}: {
-  user: Pick<User, 'email'>
-  ideas: Array<Pick<Idea, 'nick' | 'name'>>
-}) => {
-  return await sendEmail({
-    to: user.email,
-    subject: 'Most Liked Ideas!',
-    templateName: 'mostLikedIdeas',
-    templateVariables: {
-      ideas: ideas.map((idea) => ({ name: idea.name, url: getViewIdeaRoute({ abs: true, ideaNick: idea.nick }) })),
-    },
-  })
-}
-
-export const testTemplates = async () => {
-  const templates = await getHbrTemplates()
-  console.log('📚 Все загруженные шаблоны:', Object.keys(templates))
-  return templates
-}
-
-// import { promises as fs } from 'fs'
-// import path from 'path'
-// import { type Idea, type User } from '@prisma/client'
-// import fg from 'fast-glob'
-// import Handlebars from 'handlebars'
-// import _ from 'lodash'
-// import { sendEmailThroughBrevo } from './brevo'
-// import { env } from './env'
-
-// const getHbrTemplates = _.memoize(async () => {
-//   const htmlPathsPattern = path.resolve(__dirname, '../emails/dist/**/*.html')
-//   const htmlPaths = fg.sync(htmlPathsPattern)
-//   const hbrTemplates: Record<string, HandlebarsTemplateDelegate> = {}
-//   for (const htmlPath of htmlPaths) {
-//     const templateName = path.basename(htmlPath, '.html')
-//     const htmlTemplate = await fs.readFile(htmlPath, 'utf8')
-//     hbrTemplates[templateName] = Handlebars.compile(htmlTemplate)
-//   }
-//   return hbrTemplates
-// })
-
-// const getEmailHtml = async (templateName: string, templateVariables: Record<string, string> = {}) => {
-//   const hbrTemplates = await getHbrTemplates()
-//   const hbrTemplate = hbrTemplates[templateName]
-//   const html = hbrTemplate(templateVariables)
-//   return html
-// }
-
-// const sendEmail = async ({
-//   to,
-//   subject,
-//   templateName,
-//   templateVariables = {},
-// }: {
-//   to: string
-//   subject: string
-//   templateName: string
-//   templateVariables?: Record<string, any>
-// }) => {
-//   try {
-//     const fullTemplateVaraibles = {
-//       ...templateVariables,
-//       homeUrl: env.WEBAPP_URL,
-//     }
-//     const html = await getEmailHtml(templateName, fullTemplateVaraibles)
-//     const { loggableResponse } = await sendEmailThroughBrevo({ to, html, subject })
-//     console.info('sendEmail', {
-//       to,
-//       templateName,
-//       templateVariables,
-//       response: loggableResponse,
-//     })
-//     return { ok: true }
-//   } catch (error) {
-//     console.error(error)
-//     return { ok: false }
-//   }
-// }
-
-// export const sendWelcomeEmail = async ({ user }: { user: Pick<User, 'nick' | 'email'> }) => {
-//   return await sendEmail({
-//     to: user.email,
-//     subject: 'Thanks For Registration!',
-//     templateName: 'welcome',
-//     templateVariables: {
-//       userNick: user.nick,
-//       addIdeaUrl: `${env.WEBAPP_URL}/ideas/new`,
-//     },
-//   })
-// }
-
-// export const sendIdeaBlockedEmail = async ({ user, idea }: { user: Pick<User, 'email'>; idea: Pick<Idea, 'nick'> }) => {
-//   return await sendEmail({
-//     to: user.email,
-//     subject: 'Your Idea Blocked!',
-//     templateName: 'ideaBlocked',
-//     templateVariables: {
-//       ideaNick: idea.nick,
-//     },
-//   })
-// }

@@ -1,13 +1,14 @@
 import { EOL } from 'os'
-import _ from 'lodash'
-import pc from 'picocolors'
 import { serializeError } from 'serialize-error'
 import { MESSAGE } from 'triple-beam'
-import winston from 'winston'
 import * as yaml from 'yaml'
 import { env } from './env'
 import debug from 'debug'
 import { deepMap } from '../utils/deepMap'
+import * as _ from 'lodash'
+import * as pc from 'picocolors'
+import * as winston from 'winston'
+import { omit } from '@ideanick/shared/src/omit'
 
 export const winstonLogger = winston.createLogger({
   level: 'debug',
@@ -33,7 +34,7 @@ export const winstonLogger = winston.createLogger({
               const levelAndType = `${logData.level} ${logData.logType}`
               const topMessage = `${setColor(levelAndType)} ${pc.green(logData.timestamp as string)}${EOL}${logData.message}`
 
-              const visibleMessageTags = _.omit(logData, [
+              const visibleMessageTags = omit(logData, [
                 'level',
                 'logType',
                 'timestamp',
@@ -64,7 +65,18 @@ type Meta = Record<string, any> | undefined
 const prettifyMeta = (meta: Meta): Meta => {
   return deepMap(meta, ({ key, value }) => {
     if (
-      ['email', 'password', 'passwordAgain', 'newPassword', 'oldPassword', 'token', 'text', 'description'].includes(key)
+      [
+        'email',
+        'password',
+        'passwordAgain',
+        'newPassword',
+        'oldPassword',
+        'token',
+        'text',
+        'description',
+        'apiKey',
+        'signature',
+      ].includes(key)
     ) {
       return '🙈'
     }

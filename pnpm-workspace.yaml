@@ -4,3 +4,4 @@ packages:
   - shared
 allowBuilds:
   '@sentry/cli': false
+  unrs-resolver: false

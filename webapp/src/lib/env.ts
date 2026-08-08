@@ -10,6 +10,7 @@ export const zEnv = z.object({
   VITE_WEBAPP_ROLLBAR_DSN: z.string().optional(), // Добавляем
   VITE_WEBAPP_ROLLBAR_ACCESS_TOKEN: z.string().optional(), // Добавляем
   VITE_WEBAPP_ROLLBAR_CLIENT_TOKEN: z.string().optional(), // Добавляем
+  VITE_CLOUDINARY_CLOUD_NAME: zEnvNonemptyTrimmed,
 })
 
 // eslint-disable-next-line node/no-process-env

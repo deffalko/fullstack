@@ -1,12 +1,34 @@
 parserOptions:
   project: ./tsconfig.json
+settings:
+  import/resolver:
+    node:
+      extensions:
+        - '.js'
+        - '.ts'
+        - '.tsx'
 rules:
-  no-console:
+  no-console: error
+  import/no-restricted-paths:
     - error
-    - allow:
-        - info
-        - error
-        - warn
-  '@typescript-eslint/no-restricted-imports':
+    - zones:
+        - target: './src/**/!(*.integration.test.ts)'
+          from: './src/test'
+          message: 'Import something from test dir only inside integration tests'
+  import/order:
     - error
-    - patterns:
+    - groups:
+        - builtin
+        - external
+        - parent
+        - sibling
+        - index
+      pathGroups:
+        - pattern: >
+            {.,..}/**/test/integration
+          group: builtin
+          position: before
+      alphabetize:
+        order: asc
+        caseInsensitive: false
+        orderImportKind: asc
