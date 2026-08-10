@@ -1,7 +1,7 @@
+import { env } from './env'
 import axios, { type AxiosResponse } from 'axios'
 import { pick } from '@ideanick/shared/src/pick'
 import _ from 'lodash'
-import { env } from './env'
 
 const makeRequestToBrevo = async ({
   path,

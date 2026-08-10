@@ -1,3 +1,4 @@
+import { env } from '../lib/env'
 import '../lib/rollbar.mock'
 import '../lib/emails/utils.mock'
 import '../lib/brevo.mock'
@@ -10,7 +11,6 @@ import { trpcRouter } from '../router'
 import { deepMap } from '../utils/deepMap'
 import { getPasswordHash } from '../utils/getPasswordHash'
 import { type ExpressRequest } from '../utils/types'
-import { env } from '../lib/env'
 import { omit } from '@ideanick/shared/src/omit'
 
 if (env.NODE_ENV !== 'test') {

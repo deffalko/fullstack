@@ -11,7 +11,8 @@ config({ path: path.join(__dirname, '../../.env') })
 async function uploadSourcemaps() {
   console.log('🚀 Uploading sourcemaps to Rollbar...')
 
-  const accessToken = process.env.VITE_WEBAPP_ROLLBAR_ACCESS_TOKEN
+  // const accessToken = process.env.VITE_WEBAPP_ROLLBAR_ACCESS_TOKEN
+  const accessToken = process.env.WEBAPP_ROLLBAR_ACCESS_TOKEN
 
   if (!accessToken) {
     console.error('❌ VITE_WEBAPP_ROLLBAR_ACCESS_TOKEN is not set')

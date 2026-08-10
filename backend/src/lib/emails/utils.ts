@@ -1,6 +1,6 @@
+import { env } from '../env'
 import { promises as fs } from 'fs'
 import { sendEmailThroughBrevo } from '../brevo'
-import { env } from '../env'
 import { winstonLogger } from '../logger'
 import * as path from 'path'
 import * as fg from 'fast-glob'

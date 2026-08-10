@@ -1,4 +1,17 @@
+// {
+//   "extends": "./tsconfig.json",
+//   "exclude": ["**/test/**/*", "**/*.test.ts"]
+// }
+
 {
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "paths": {
+      "@ideanick/webapp/*": ["../webapp/src/*"],
+      "@ideanick/shared/*": ["../shared/src/*"]
+    }
+  },
+  "include": ["src"],
   "exclude": ["**/test/**/*", "**/*.test.ts"]
 }

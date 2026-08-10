@@ -1,19 +1,12 @@
 import react from '@vitejs/plugin-react'
 import { defineConfig, loadEnv } from 'vite'
 import svgr from 'vite-plugin-svgr'
+import { parsePublicEnv } from './src/lib/parsePublicEnv'
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
 
-  const publicEnv = Object.entries(env).reduce((acc, [key, value]) => {
-    if (key.startsWith('VITE_') || ['NODE_ENV', 'HOST_ENV', 'SOURCE_VERSION'].includes(key)) {
-      return {
-        ...acc,
-        [key]: value,
-      }
-    }
-    return acc
-  }, {})
+  const publicEnv = parsePublicEnv(env)
 
   return {
     plugins: [react(), svgr()],
@@ -27,7 +20,7 @@ export default defineConfig(({ mode }) => {
       'process.env': publicEnv,
     },
     build: {
-      sourcemap: true, // ✅ Включаем генерацию sourcemap
+      sourcemap: true,
     },
   }
 })

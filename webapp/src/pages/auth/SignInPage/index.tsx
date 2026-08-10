@@ -8,6 +8,7 @@ import { Segment } from '../../../components/Segment'
 import { useForm } from '../../../lib/form'
 import { withPageWrapper } from '../../../lib/pageWrapper'
 import { trpc } from '../../../lib/trpc'
+import { trackEvent } from '../../../lib/yandexMetrika'
 
 export const SignInPage = withPageWrapper({
   redirectAuthorized: true,
@@ -23,6 +24,10 @@ export const SignInPage = withPageWrapper({
     validationSchema: zSignInTrpcInput,
     onSubmit: async (values) => {
       const { token } = await signIn.mutateAsync(values)
+      if (window.ym) {
+        window.ym(111463966, 'setUserID', values.nick)
+      }
+      trackEvent('signin')
       Cookies.set('token', token, { expires: 99999 })
       void trpcUtils.invalidate()
     },

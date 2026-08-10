@@ -8,7 +8,7 @@ import {
 } from '../../../../shared/src/cloudinary'
 import { Button } from '../Button'
 import { Icon } from '../Icon'
-import { useUploadToCloudinary } from '../uploadToCloudinary'
+import { useUploadToCloudinary } from '../UploadToCloudinary'
 import css from './index.module.scss'
 
 export const UploadsToCloudinary = <TTypeName extends CloudinaryUploadTypeName>({

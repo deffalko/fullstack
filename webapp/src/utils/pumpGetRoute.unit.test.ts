@@ -1,8 +1,9 @@
-// eslint-disable-next-line node/no-process-env
-process.env.WEBAPP_URL = 'https://example.com'
+import { sharedEnv } from '../../../shared/src/env'
 
 // eslint-disable-next-line import/first
 import { pgr } from './pumpGetRoute'
+
+sharedEnv.WEBAPP_URL = 'https://example.com'
 
 describe('pgr', () => {
   it('return simple route', () => {

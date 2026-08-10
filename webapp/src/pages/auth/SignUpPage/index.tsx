@@ -9,6 +9,7 @@ import { Segment } from '../../../components/Segment'
 import { useForm } from '../../../lib/form'
 import { withPageWrapper } from '../../../lib/pageWrapper'
 import { trpc } from '../../../lib/trpc'
+import { trackEvent } from '../../../lib/yandexMetrika'
 
 export const SignUpPage = withPageWrapper({
   redirectAuthorized: true,
@@ -30,6 +31,10 @@ export const SignUpPage = withPageWrapper({
       .superRefine(zPasswordsMustBeTheSame('password', 'passwordAgain')),
     onSubmit: async (values) => {
       const { token } = await signUp.mutateAsync(values)
+      if (window.ym) {
+        window.ym(111463966, 'setUserID', values.nick)
+      }
+      trackEvent('signup')
       Cookies.set('token', token, { expires: 99999 })
       void trpcUtils.invalidate()
     },

@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "test": "jest",
+    "test": "dotenv -e .env.test -e .env jest",
     "build": "tsc && vite build && node src/lib/upload-sourcemaps.mjs",
     "preview": "vite preview",
     "types": "tsc --noEmit --project ./tsconfig.json && tsc --noEmit --project ./tsconfig.node.json",
@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@ideanick/backend": "workspace:*",
+    "@ideanick/shared": "workspace:*",
     "@nanostores/react": "^1.1.0",
     "@rollbar/react": "^1.0.0",
     "@tanstack/react-query": "^4.32.6",
@@ -49,6 +50,7 @@
     "@types/jest": "^30.0.0",
     "@types/js-cookie": "^3.0.3",
     "@types/lodash": "^4.14.198",
+    "@types/node": "^26.2.0",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@types/react-image-gallery": "^1.2.4",
@@ -61,6 +63,7 @@
     "stylelint-config-prettier-scss": "^1.0.0",
     "stylelint-config-standard-scss": "^11.0.0",
     "ts-jest": "^29.4.12",
+    "ts-node": "^10.9.2",
     "vite": "^4.4.5",
     "vite-plugin-svgr": "^3.2.0"
   }

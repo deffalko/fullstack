@@ -1,5 +1,5 @@
-import cors from 'cors'
 import { env } from './lib/env'
+import cors from 'cors'
 import express from 'express'
 import { createAppContext, type AppContext } from './lib/ctx'
 import { applyPassportToExpressApp } from './lib/passport'
@@ -10,6 +10,7 @@ import { sendWelcomeEmail, sendIdeaBlockedEmail } from './lib/emails'
 import { applyCron } from './lib/cron'
 import { logger } from './lib/logger'
 import { initRollbar } from './lib/rollbar'
+import { applyServeWebApp } from './lib/serveWebApp'
 
 void (async () => {
   let ctx: AppContext | null = null
@@ -88,6 +89,7 @@ void (async () => {
     // Passport и tRPC
     applyPassportToExpressApp(expressApp, ctx)
     await applyTrpcToExpressApp(expressApp, ctx, trpcRouter)
+    await applyServeWebApp(expressApp)
 
     applyCron(ctx)
 

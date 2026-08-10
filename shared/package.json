@@ -9,6 +9,9 @@
     "test": "jest"
   },
   "dependencies": {
+    "@ideanick/backend": "workspace:*",
+    "@ideanick/shared": "workspace:*",
+    "@ideanick/webapp": "workspace:*",
     "lodash": "^4.18.1",
     "zod": "^3.21.4"
   },

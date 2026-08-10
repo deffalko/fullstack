@@ -25,7 +25,7 @@ rules:
         - index
       pathGroups:
         - pattern: >
-            {.,..}/**/test/integration
+            {.,..}/**/env
           group: builtin
           position: before
       alphabetize:

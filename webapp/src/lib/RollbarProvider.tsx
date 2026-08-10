@@ -1,6 +1,6 @@
 // webapp/src/RollbarProvider.tsx
-import React from 'react'
 import { Provider, ErrorBoundary, useRollbar } from '@rollbar/react'
+import React from 'react'
 import Rollbar from 'rollbar'
 import { env } from './env'
 
@@ -81,7 +81,7 @@ export const useRollbarError = () => {
 export const rollbarCaptureException = (error: unknown) => {
   const rollbar = (window as any).rollbar || (window as any).__ROLLBAR__?.global?.notifier
 
-  if (env.VITE_WEBAPP_ROLLBAR_ACCESS_TOKEN) {
+  if (env.WEBAPP_ROLLBAR_ACCESS_TOKEN) {
     rollbar.error(error)
   }
 
