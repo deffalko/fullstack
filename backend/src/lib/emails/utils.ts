@@ -3,18 +3,11 @@ import { promises as fs } from 'fs'
 import { sendEmailThroughBrevo } from '../brevo'
 import { winstonLogger } from '../logger'
 import * as path from 'path'
-import * as fg from 'fast-glob'
 import * as Handlebars from 'handlebars'
 import * as _ from 'lodash'
 
 // Типы для переменных шаблонов
 type TemplateVariables = Record<string, any>
-
-// В utils/index.ts
-
-let templatesCache: Record<string, HandlebarsTemplateDelegate> | null = null
-let templatesLoading = false
-let templatesPromise: Promise<Record<string, HandlebarsTemplateDelegate>> | null = null
 
 /**
  * Загрузка всех Handlebars шаблонов с кешированием
