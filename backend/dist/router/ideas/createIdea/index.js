@@ -17,6 +17,7 @@ exports.createIdeaTrpcRoute = trpc_1.trpcLoggedProcedure.input(input_1.zCreateId
         throw new error_1.ExpectedError('Idea with this nick already exists');
     }
     await ctx.prisma.idea.create({
+        // data: { ...input, authorId: ctx.me.id },
         data: { ...input, authorId: ctx.me.id },
     });
     return true;

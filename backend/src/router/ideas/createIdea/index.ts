@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client'
 import { ExpectedError } from '../../../lib/error'
 import { trpcLoggedProcedure } from '../../../lib/trpc'
 import { zCreateIdeaTrpcInput } from './input'
@@ -15,7 +16,8 @@ export const createIdeaTrpcRoute = trpcLoggedProcedure.input(zCreateIdeaTrpcInpu
     throw new ExpectedError('Idea with this nick already exists')
   }
   await ctx.prisma.idea.create({
-    data: { ...input, authorId: ctx.me.id },
+    // data: { ...input, authorId: ctx.me.id },
+    data: { ...input, authorId: ctx.me.id } as Prisma.IdeaUncheckedCreateInput,
   })
   return true
 })

@@ -1,4 +1,3 @@
-"use strict";
 // backend/src/scripts/upload-sourcemaps.mjs
 import fs from 'fs';
 import path from 'path';
