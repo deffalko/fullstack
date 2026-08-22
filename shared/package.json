@@ -3,15 +3,13 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
+    "build": "tsc",
     "types": "tsc --noEmit --project ./tsconfig.json",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/.eslintcache --ext .ts .",
     "prettify": "prettier --loglevel warn --cache --write '{src/**/*,*}.{ts,tsx,js,json,yml,scss}' '!**/{node_modules,dist}/**/*'",
     "test": "jest"
   },
   "dependencies": {
-    "@ideanick/backend": "workspace:*",
-    "@ideanick/shared": "workspace:*",
-    "@ideanick/webapp": "workspace:*",
     "lodash": "^4.18.1",
     "zod": "^3.21.4"
   },

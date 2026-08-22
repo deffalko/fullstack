@@ -10,83 +10,50 @@ import * as _ from 'lodash'
 // Типы для переменных шаблонов
 type TemplateVariables = Record<string, any>
 
+// В utils/index.ts
+
+let templatesCache: Record<string, HandlebarsTemplateDelegate> | null = null
+let templatesLoading = false
+let templatesPromise: Promise<Record<string, HandlebarsTemplateDelegate>> | null = null
+
 /**
- * Мемоизированная загрузка всех Handlebars шаблонов из папки emails/dist
+ * Загрузка всех Handlebars шаблонов с кешированием
  */
 const getHbrTemplates = _.memoize(async (): Promise<Record<string, HandlebarsTemplateDelegate>> => {
   try {
-    // ПРОБУЕМ НЕСКОЛЬКО ВАРИАНТОВ ПУТЕЙ
-    const possiblePaths = [
-      path.resolve(process.cwd(), 'emails/dist'), // backend/emails/dist
-      path.resolve(process.cwd(), 'src/emails/dist'), // backend/src/emails/dist
-      path.resolve(__dirname, '../emails/dist'), // относительно текущего файла
-      path.resolve(__dirname, '../../emails/dist'), // на уровень выше
-      path.resolve(process.cwd(), '../emails/dist'), // на уровень выше backend
-    ]
+    const templatesDir = path.resolve(process.cwd(), 'src/emails/dist')
 
-    let templatesDir = ''
-    let htmlPaths: string[] = []
+    console.log(`📁 Загрузка шаблонов из: ${templatesDir}`)
 
-    // Ищем первую существующую папку
-    for (const testPath of possiblePaths) {
-      try {
-        await fs.access(testPath)
-        templatesDir = testPath
-        const pattern = path.join(testPath, '**/*.html')
-        htmlPaths = fg.sync(pattern)
-        if (htmlPaths.length > 0) {
-          console.log(`✅ Найдены шаблоны в: ${templatesDir}`)
-          break
-        }
-      } catch {
-        // Папка не существует, пробуем следующую
-        continue
-      }
+    // Проверяем существование папки
+    try {
+      await fs.access(templatesDir)
+    } catch {
+      console.warn(`⚠️ Папка не найдена: ${templatesDir}`)
+      return {}
     }
 
-    // Если не нашли ни одного пути, пробуем искать рекурсивно
-    if (htmlPaths.length === 0) {
-      console.warn('⚠️ Шаблоны не найдены в стандартных путях, ищу рекурсивно...')
-
-      // Ищем все HTML файлы в папке backend
-      const searchPattern = path.resolve(process.cwd(), '**/emails/dist/**/*.html')
-      htmlPaths = fg.sync(searchPattern, {
-        deep: 5,
-        ignore: ['**/node_modules/**', '**/.git/**'],
-      })
-
-      if (htmlPaths.length > 0) {
-        templatesDir = path.dirname(htmlPaths[0])
-        console.log(`✅ Найдены шаблоны в: ${templatesDir}`)
-      }
-    }
-
-    console.log('📁 Путь к шаблонам:', templatesDir)
-    console.log('📄 Найдены HTML шаблоны:', htmlPaths)
-
+    // ЧИТАЕМ КОНКРЕТНЫЕ ФАЙЛЫ напрямую
+    const templateNames = ['welcome', 'ideaBlocked', 'mostLikedIdeas']
     const hbrTemplates: Record<string, HandlebarsTemplateDelegate> = {}
 
-    for (const htmlPath of htmlPaths) {
-      const templateName = path.basename(htmlPath, '.html')
-      const htmlTemplate = await fs.readFile(htmlPath, 'utf8')
-
-      if (!htmlTemplate || htmlTemplate.trim().length === 0) {
-        console.warn(`⚠️ Шаблон ${templateName} пустой`)
-        continue
-      }
-
+    for (const templateName of templateNames) {
+      const filePath = path.join(templatesDir, `${templateName}.html`)
       try {
-        hbrTemplates[templateName] = Handlebars.compile(htmlTemplate, {
-          noEscape: true,
-        })
-        console.log(`✅ Шаблон ${templateName} успешно скомпилирован`)
-      } catch (compileError) {
-        console.error(`❌ Ошибка компиляции шаблона ${templateName}:`, compileError)
-        // Запасной вариант — пустой шаблон
-        hbrTemplates[templateName] = Handlebars.compile('<p>Template not available</p>')
+        await fs.access(filePath)
+        const htmlContent = await fs.readFile(filePath, 'utf8')
+        if (htmlContent && htmlContent.trim().length > 0) {
+          hbrTemplates[templateName] = Handlebars.compile(htmlContent, {
+            noEscape: true,
+          })
+          console.log(`✅ Шаблон ${templateName} загружен`)
+        }
+      } catch (error) {
+        console.warn(`⚠️ Шаблон ${templateName} не найден:`, filePath)
       }
     }
 
+    console.log(`✅ Загружено шаблонов: ${Object.keys(hbrTemplates).length}`)
     return hbrTemplates
   } catch (error) {
     console.error('❌ Ошибка при загрузке шаблонов:', error)
