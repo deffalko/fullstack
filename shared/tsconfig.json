@@ -5,7 +5,9 @@
     "rootDir": "./src",
     "outDir": "./dist",
     "types": ["node"],
-    "composite": false
+    "composite": false,
+    "noImplicitAny": false,
+    "strict": false
   },
   "exclude": ["node_modules", "dist"]
 }
