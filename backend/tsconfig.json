@@ -6,10 +6,8 @@
   "compilerOptions": {
     "plugins": [{ "transform": "typescript-transform-paths" }],
     "paths": {
-      // "@ideanick/webapp/*": ["../webapp/src/*"],
-      // "@ideanick/shared/*": ["../shared/src/*"]
       "@ideanick/webapp/*": ["../webapp/*"],
-      "@ideanick/shared/*": ["../shared/*"]
+      "@ideanick/shared/*": ["../shared/dist/*"]
     },
     "outDir": "./dist",
     "types": ["jest", "node"],

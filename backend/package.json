@@ -76,6 +76,7 @@
     "jest": "^30.4.2",
     "ts-jest": "^29.4.12",
     "tsconfig-paths": "^4.2.0",
+    "ttypescript": "^1.5.15",
     "typescript": "^5.0.4"
   }
 }
