@@ -39,7 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.env = void 0;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
-const zod_1 = require("@ideanick/shared/src/zod");
+const zod_1 = require("@ideanick/shared/dist/zod");
 const dotenv = __importStar(require("dotenv"));
 const zod_2 = require("zod");
 const findEnvFilePath = (dir, pathPart) => {

@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendEmailThroughBrevo = void 0;
 const env_1 = require("./env");
 const axios_1 = __importDefault(require("axios"));
-const pick_1 = require("@ideanick/shared/src/pick");
+const pick_1 = require("@ideanick/shared/dist/pick");
 const makeRequestToBrevo = async ({ path, data, }) => {
     if (!env_1.env.BREVO_API_KEY) {
         return {

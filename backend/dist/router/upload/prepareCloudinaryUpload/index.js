@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.prepareCloudinaryUploadTrpcRoute = void 0;
-const cloudinary_1 = require("@ideanick/shared/src/cloudinary");
+const cloudinary_1 = require("@ideanick/shared/dist/cloudinary");
 const cloudinary_2 = require("cloudinary");
 const env_1 = require("../../../lib/env");
 const trpc_1 = require("../../../lib/trpc");

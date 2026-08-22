@@ -47,7 +47,7 @@ const deepMap_1 = require("../utils/deepMap");
 const _ = __importStar(require("lodash"));
 const pc = __importStar(require("picocolors"));
 const winston = __importStar(require("winston"));
-const omit_1 = require("@ideanick/shared/src/omit");
+const omit_1 = require("@ideanick/shared/dist/omit");
 exports.winstonLogger = winston.createLogger({
     level: 'debug',
     format: winston.format.combine(winston.format.timestamp({

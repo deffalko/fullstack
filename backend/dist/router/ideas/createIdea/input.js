@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.zCreateIdeaTrpcInput = void 0;
-const zod_1 = require("@ideanick/shared/src/zod");
+const zod_1 = require("@ideanick/shared/dist/zod");
 const zod_2 = require("zod");
 exports.zCreateIdeaTrpcInput = zod_2.z.object({
     name: zod_1.zStringRequired,
