@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
+    "build": "pnpm --filter @ideanick/shared build && pnpm --filter @ideanick/webapp build && pnpm --filter @ideanick/backend build",
     "b": "pnpm --filter @ideanick/backend",
     "w": "pnpm --filter @ideanick/webapp",
     "sh": "pnpm --filter @ideanick/shared",
