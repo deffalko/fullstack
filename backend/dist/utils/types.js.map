@@ -1,0 +1,1 @@
+{"version":3,"file":"types.js","sourceRoot":"","sources":["../../src/utils/types.ts"],"names":[],"mappings":"","sourcesContent":["import { type User } from '@prisma/client'\r\nimport { type Request } from 'express'\r\n\r\nexport type ExpressRequest = Request & {\r\n  user: User | undefined\r\n}\r\n"]}
