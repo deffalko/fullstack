@@ -10,19 +10,65 @@ services:
         value: 3000
       - key: NODE_ENV
         value: production
-      - key: DATABASE_URL
-        sync: false
-      - key: JWT_SECRET
-        sync: false
-      - key: CLOUDINARY_CLOUD_NAME
-        sync: false
-      - key: CLOUDINARY_API_KEY
-        sync: false
-      - key: CLOUDINARY_API_SECRET
-        sync: false
-      - key: SENTRY_DSN
-        sync: false
-      - key: ROLLBAR_ACCESS_TOKEN
-        sync: false
+      - key: HOST_ENV
+        value: production
       - key: SOURCE_VERSION
-        sync: false
+        value: '123'
+
+      # База данных - Render создаст автоматически
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ideanick-db
+          property: connectionString
+
+      # Секретные ключи - нужно указать значения
+      - key: JWT_SECRET
+        value: your-secret-key-here
+      - key: PASSWORD_SALT
+        value: your-password-salt-here
+      - key: INITIAL_ADMIN_PASSWORD
+        value: your-admin-password
+
+      # Email
+      - key: BREVO_API_KEY
+        value: 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
+      - key: FROM_EMAIL_NAME
+        value: ideaNick
+      - key: FROM_EMAIL_ADDRESS
+        value: noreply@idea-back.ru
+
+      # Cloudinary
+      - key: CLOUDINARY_CLOUD_NAME
+        value: fdh7j6da
+      - key: CLOUDINARY_API_KEY
+        value: '999194761623597'
+      - key: CLOUDINARY_API_SECRET
+        value: D-IYKCm_oNglpyR_BBOP7i_Ql_g
+
+      # S3
+      - key: S3_URL
+        value: https://example-bucket.s3.amazonaws.com
+
+      # Rollbar
+      - key: ROLLBAR_SERVER_ACCESS_TOKEN
+        value: 3830803b5e444a0487c1fec8b5b10a4c3986a8b8d39a060df2a27c96b293a5e7f9b158cbf173465738d535a57aa3ffd2
+      - key: VITE_WEBAPP_ROLLBAR_CLIENT_TOKEN
+        value: 441f6e46a49c4f65aea2f9c5822261cb4cf014ee998cc01c520dae1df5610aaf80d980eb5e5478f6d05962c6ece82942
+      - key: WEBAPP_ROLLBAR_ACCESS_TOKEN
+        value: 3830803b5e444a0487c1fec8b5b10a4c3986a8b8d39a060df2a27c96b293a5e7f9b158cbf173465738d535a57aa3ffd2
+      - key: VITE_WEBAPP_ROLLBAR_ACCESS_TOKEN
+        value: 3830803b5e444a0487c1fec8b5b10a4c3986a8b8d39a060df2a27c96b293a5e7f9b158cbf173465738d535a57aa3ffd2
+
+      # URL для production
+      - key: WEBAPP_URL
+        value: https://ideanick.onrender.com
+      - key: VITE_BACKEND_TRPC_URL
+        value: https://ideanick.onrender.com/trpc
+      - key: VITE_WEBAPP_URL
+        value: https://ideanick.onrender.com
+
+databases:
+  - name: ideanick-db
+    databaseName: ideanick
+    user: ideanick
+    plan: free
