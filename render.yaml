@@ -20,13 +20,13 @@ services:
           name: ideanick-db
           property: connectionString
 
-      # Безопасность
+      # Безопасность (введите на Render)
       - key: JWT_SECRET
-        value: local-jwt-secret
+        sync: false
       - key: PASSWORD_SALT
-        value: local-password-salt
+        sync: false
       - key: INITIAL_ADMIN_PASSWORD
-        value: '1234'
+        sync: false
 
       # URLs
       - key: WEBAPP_URL
@@ -36,9 +36,9 @@ services:
       - key: VITE_WEBAPP_URL
         value: https://ideanick.onrender.com
 
-      # Email (Brevo)
+      # Email (Brevo) - введите на Render
       - key: BREVO_API_KEY
-        value: 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
+        sync: false
       - key: FROM_EMAIL_NAME
         value: ideaNick
       - key: FROM_EMAIL_ADDRESS
@@ -48,23 +48,23 @@ services:
       - key: DEBUG
         value: 'ideanick:*,-ideanick:prisma:*,-ideanick:trpc:query:success'
 
-      # Rollbar
+      # Rollbar - введите на Render
       - key: ROLLBAR_SERVER_ACCESS_TOKEN
-        value: 3830803b5e444a0487c1fec8b5b10a4c3986a8b8d39a060df2a27c96b293a5e7f9b158cbf173465738d535a57aa3ffd2
+        sync: false
       - key: VITE_WEBAPP_ROLLBAR_CLIENT_TOKEN
-        value: 441f6e46a49c4f65aea2f9c5822261cb4cf014ee998cc01c520dae1df5610aaf80d980eb5e5478f6d05962c6ece82942
+        sync: false
       - key: WEBAPP_ROLLBAR_ACCESS_TOKEN
-        value: 3830803b5e444a0487c1fec8b5b10a4c3986a8b8d39a060df2a27c96b293a5e7f9b158cbf173465738d535a57aa3ffd2
+        sync: false
       - key: VITE_WEBAPP_ROLLBAR_ACCESS_TOKEN
-        value: 3830803b5e444a0487c1fec8b5b10a4c3986a8b8d39a060df2a27c96b293a5e7f9b158cbf173465738d535a57aa3ffd2
+        sync: false
 
-      # Cloudinary
+      # Cloudinary - введите на Render
       - key: CLOUDINARY_CLOUD_NAME
         value: fdh7j6da
       - key: CLOUDINARY_API_KEY
-        value: '999194761623597'
+        sync: false
       - key: CLOUDINARY_API_SECRET
-        value: D-IYKCm_oNglpyR_BBOP7i_Ql_g
+        sync: false
       - key: VITE_CLOUDINARY_CLOUD_NAME
         value: fdh7j6da
 
