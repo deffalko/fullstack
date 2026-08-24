@@ -6,30 +6,37 @@ services:
     plan: free
     healthCheckPath: /ping
     envVars:
+      # Основные
       - key: PORT
         value: 3000
       - key: NODE_ENV
         value: production
       - key: HOST_ENV
         value: production
-      - key: SOURCE_VERSION
-        value: '123'
 
-      # База данных - Render создаст автоматически
+      # База данных
       - key: DATABASE_URL
         fromDatabase:
           name: ideanick-db
           property: connectionString
 
-      # Секретные ключи - нужно указать значения
+      # Безопасность
       - key: JWT_SECRET
-        value: your-secret-key-here
+        value: local-jwt-secret
       - key: PASSWORD_SALT
-        value: your-password-salt-here
+        value: local-password-salt
       - key: INITIAL_ADMIN_PASSWORD
-        value: your-admin-password
+        value: '1234'
 
-      # Email
+      # URLs
+      - key: WEBAPP_URL
+        value: https://ideanick.onrender.com
+      - key: VITE_BACKEND_TRPC_URL
+        value: https://ideanick.onrender.com/trpc
+      - key: VITE_WEBAPP_URL
+        value: https://ideanick.onrender.com
+
+      # Email (Brevo)
       - key: BREVO_API_KEY
         value: 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
       - key: FROM_EMAIL_NAME
@@ -37,17 +44,9 @@ services:
       - key: FROM_EMAIL_ADDRESS
         value: noreply@idea-back.ru
 
-      # Cloudinary
-      - key: CLOUDINARY_CLOUD_NAME
-        value: fdh7j6da
-      - key: CLOUDINARY_API_KEY
-        value: '999194761623597'
-      - key: CLOUDINARY_API_SECRET
-        value: D-IYKCm_oNglpyR_BBOP7i_Ql_g
-
-      # S3
-      - key: S3_URL
-        value: https://example-bucket.s3.amazonaws.com
+      # Debug
+      - key: DEBUG
+        value: 'ideanick:*,-ideanick:prisma:*,-ideanick:trpc:query:success'
 
       # Rollbar
       - key: ROLLBAR_SERVER_ACCESS_TOKEN
@@ -59,13 +58,25 @@ services:
       - key: VITE_WEBAPP_ROLLBAR_ACCESS_TOKEN
         value: 3830803b5e444a0487c1fec8b5b10a4c3986a8b8d39a060df2a27c96b293a5e7f9b158cbf173465738d535a57aa3ffd2
 
-      # URL для production
-      - key: WEBAPP_URL
-        value: https://ideanick.onrender.com
-      - key: VITE_BACKEND_TRPC_URL
-        value: https://ideanick.onrender.com/trpc
-      - key: VITE_WEBAPP_URL
-        value: https://ideanick.onrender.com
+      # Cloudinary
+      - key: CLOUDINARY_CLOUD_NAME
+        value: fdh7j6da
+      - key: CLOUDINARY_API_KEY
+        value: '999194761623597'
+      - key: CLOUDINARY_API_SECRET
+        value: D-IYKCm_oNglpyR_BBOP7i_Ql_g
+      - key: VITE_CLOUDINARY_CLOUD_NAME
+        value: fdh7j6da
+
+      # S3
+      - key: S3_URL
+        value: https://example-bucket.s3.amazonaws.com
+      - key: VITE_S3_URL
+        value: https://example-bucket.s3.amazonaws.com
+
+      # Версия
+      - key: SOURCE_VERSION
+        value: '123'
 
 databases:
   - name: ideanick-db
