@@ -5,3 +5,5 @@ export const zSignInTrpcInput = z.object({
   nick: zStringRequired,
   password: zStringRequired,
 })
+
+

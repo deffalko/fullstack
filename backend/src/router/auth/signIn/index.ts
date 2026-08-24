@@ -17,3 +17,5 @@ export const signInTrpcRoute = trpcLoggedProcedure.input(zSignInTrpcInput).mutat
   const token = signJWT(user.id)
   return { token }
 })
+
+

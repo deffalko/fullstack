@@ -14,8 +14,8 @@
     "prettify": "prettier --loglevel warn --cache --write '{src/**/*,*}.{ts,tsx,js,json,yml,scss}' '!**/{node_modules,dist}/**/*'"
   },
   "dependencies": {
-    "@ideanick/backend": "workspace:*",
     "@ideanick/shared": "workspace:*",
+    "@ideanick/backend": "workspace:*",
     "@nanostores/react": "^1.1.0",
     "@rollbar/react": "^1.0.0",
     "@tanstack/react-query": "^4.32.6",

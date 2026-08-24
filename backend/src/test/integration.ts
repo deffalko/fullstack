@@ -11,7 +11,7 @@ import { trpcRouter } from '../router'
 import { deepMap } from '../utils/deepMap'
 import { getPasswordHash } from '../utils/getPasswordHash'
 import { type ExpressRequest } from '../utils/types'
-import { omit } from '@ideanick/shared/src/omit'
+import { omit } from '@ideanick/shared/src/zod'
 
 if (env.NODE_ENV !== 'test') {
   throw new Error('Run integration tests only with NODE_ENV=test')
@@ -115,3 +115,5 @@ export const createIdeaLike = async ({
     },
   })
 }
+
+

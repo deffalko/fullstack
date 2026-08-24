@@ -28,7 +28,7 @@ const customTrpcLink: TRPCLink<TrpcRouter> = () => {
         },
         error(error) {
           // ===== ПРОВЕРКА НА ФЛАГ =====
-          if (!error.data?.isExpected) {
+          if (!(error as any)?.data?.isExpected) {
             // Отправляем в Rollbar только НЕОЖИДАННЫЕ ошибки
             rollbarCaptureException(error)
             if (env.NODE_ENV !== 'development') {

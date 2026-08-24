@@ -18,3 +18,5 @@ describe('can', () => {
     expect(canEditIdea({ permissions: [], id: 'hacker' }, { authorId: 'x' })).toBe(false)
   })
 })
+
+

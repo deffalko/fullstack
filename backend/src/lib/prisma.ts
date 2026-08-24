@@ -51,3 +51,5 @@ export const createPrismaClient = () => {
 
   return extendedPrisma
 }
+
+

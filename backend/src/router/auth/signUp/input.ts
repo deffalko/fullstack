@@ -6,3 +6,5 @@ export const zSignUpTrpcInput = z.object({
   email: zEmailRequired,
   password: zStringRequired,
 })
+
+

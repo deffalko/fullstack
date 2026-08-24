@@ -16,3 +16,5 @@ jest.mock('./brevo', () => {
     sendEmailThroughBrevo: mockedSendEmailThroughBrevo,
   }
 })
+
+

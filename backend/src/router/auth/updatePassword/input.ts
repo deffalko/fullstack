@@ -5,3 +5,5 @@ export const zUpdatePasswordTrpcInput = z.object({
   oldPassword: zStringRequired,
   newPassword: zStringRequired,
 })
+
+

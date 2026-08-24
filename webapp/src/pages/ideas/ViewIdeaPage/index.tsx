@@ -18,7 +18,7 @@ import css from './index.module.scss'
 const LikeButton = ({ idea }: { idea: NonNullable<TrpcRouterOutput['getIdea']['idea']> }) => {
   const trpcUtils = trpc.useContext()
   const setIdeaLike = trpc.setIdeaLike.useMutation({
-    onMutate: ({ isLikedByMe }) => {
+    onMutate: ({ isLikedByMe }: { isLikedByMe: boolean }) => {
       const oldGetIdeaData = trpcUtils.getIdea.getData({ ideaNick: idea.nick })
       if (oldGetIdeaData?.idea) {
         const newGetIdeaData = {

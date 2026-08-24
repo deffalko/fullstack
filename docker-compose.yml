@@ -1,50 +1,22 @@
 services:
-  postgres:
-    image: postgres:15-alpine
-    container_name: postgres-db
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: ideanick
-    ports:
-      - '5432:5432'
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    restart: unless-stopped
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U postgres']
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   app:
-    build: .
+    # platform: linux/amd64 # uncomment to build for amd64 which used in heroku
+    build:
+      context: .
+      # args used in image build as env variables
+      args:
+        # ${...} is used to get value from env of host machine
+        VITE_WEBAPP_ROLLBAR_CLIENT_TOKEN: ${VITE_WEBAPP_ROLLBAR_CLIENT_TOKEN}
+        WEBAPP_ROLLBAR_ACCESS_TOKEN: ${WEBAPP_ROLLBAR_ACCESS_TOKEN}
+        VITE_WEBAPP_ROLLBAR_ACCESS_TOKEN: ${VITE_WEBAPP_ROLLBAR_ACCESS_TOKEN}
+        ROLLBAR_SERVER_ACCESS_TOKEN: ${ROLLBAR_SERVER_ACCESS_TOKEN}
+        SOURCE_VERSION: ${SOURCE_VERSION}
+    image: ideanick-image
     container_name: ideanick-container
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      - NODE_ENV=production
-      - PORT=3000
-      - HOST_ENV=production
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/ideanick
-      - JWT_SECRET=your_jwt_secret_change_me
-      - PASSWORD_SALT=your_password_salt_change_me
-      - INITIAL_ADMIN_PASSWORD=admin123
-      - WEBAPP_URL=http://localhost:3000
-      - FROM_EMAIL_NAME=Test
-      - FROM_EMAIL_ADDRESS=test@test.com
-      - CLOUDINARY_CLOUD_NAME=test
-      - BREVO_API_KEY=dummy
-      - CLOUDINARY_API_KEY=dummy
-      - CLOUDINARY_API_SECRET=dummy
-      - VITE_WEBAPP_ROLLBAR_CLIENT_TOKEN=${VITE_WEBAPP_ROLLBAR_CLIENT_TOKEN}
-      - WEBAPP_ROLLBAR_ACCESS_TOKEN=${WEBAPP_ROLLBAR_ACCESS_TOKEN}
-      - VITE_WEBAPP_ROLLBAR_ACCESS_TOKEN=${VITE_WEBAPP_ROLLBAR_ACCESS_TOKEN}
-      - ROLLBAR_SERVER_ACCESS_TOKEN=${ROLLBAR_SERVER_ACCESS_TOKEN}
+    # env_file and ports used in runtime of container, not in image build
+    env_file:
+      - ./webapp/.env
+      - ./backend/.env
+      - ./.env.docker
     ports:
-      - '3000:3000'
-    restart: unless-stopped
-
-volumes:
-  postgres_data:
+      - '${PORT}:${PORT}'

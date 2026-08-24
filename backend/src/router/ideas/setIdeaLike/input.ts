@@ -5,3 +5,5 @@ export const zSetIdeaLikeIdeaTrpcInput = z.object({
   ideaId: zStringRequired,
   isLikedByMe: z.boolean(),
 })
+
+

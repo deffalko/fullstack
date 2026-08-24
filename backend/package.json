@@ -11,7 +11,7 @@
     "build-ts": "rimraf ./dist && tsc --build ./tsconfig.build.json",
     "build": "pnpm build-ts && pnpm build-emails && pnpm copy-emails && node src/scripts/upload-sourcemaps.mjs",
     "upload:sourcemaps": "node src/scripts/upload-sourcemaps.mjs",
-    "start": "cross-env NODE_ENV=production ts-node --project tsconfig.json ./dist/index.js",
+    "start": "cross-env NODE_ENV=production ts-node --project tsconfig.json ./src/index.ts",
     "pmd": "prisma migrate dev",
     "pmt": "dotenv -e ./.env.test prisma migrate deploy",
     "pmp": "dotenv -e ./.env.production prisma migrate deploy",

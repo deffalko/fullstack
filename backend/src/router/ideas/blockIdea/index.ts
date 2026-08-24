@@ -30,3 +30,5 @@ export const blockIdeaTrpcRoute = trpcLoggedProcedure.input(zBlockIdeaTrpcInput)
   void sendIdeaBlockedEmail({ user: idea.author, idea })
   return true
 })
+
+

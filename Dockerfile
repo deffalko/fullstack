@@ -1,63 +1,70 @@
-FROM node:18-alpine AS builder
+FROM node:20.18.0
 
-RUN npm config set fetch-retry-mintimeout 20000 && \
-    npm config set fetch-retry-maxtimeout 120000 && \
-    npm config set fetch-retries 10 && \
-    npm install -g pnpm@8.15.9
-
-RUN apk add --no-cache openssl
+RUN npm install -g pnpm@8.15.4
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY backend/package.json ./backend/
-COPY webapp/package.json ./webapp/
-COPY shared/package.json ./shared/
+COPY pnpm-lock.yaml .
+RUN pnpm fetch
 
-COPY backend/src/prisma ./backend/src/prisma
+COPY . .
+RUN pnpm install --offline --ignore-scripts --frozen-lockfile
 
-RUN pnpm install --frozen-lockfile
+ARG NODE_ENV=production
+ARG VITE_WEBAPP_ROLLBAR_CLIENT_TOKEN
+ARG WEBAPP_ROLLBAR_ACCESS_TOKEN
+ARG VITE_WEBAPP_ROLLBAR_ACCESS_TOKEN
+ARG ROLLBAR_SERVER_ACCESS_TOKEN
+ARG SOURCE_VERSION
 
-COPY backend ./backend
-COPY webapp ./webapp
-COPY shared ./shared
+# Генерируем Prisma client
+RUN pnpm b prepare
 
-# ✅ СБОРКА SHARED
-RUN cd shared && pnpm build
+# Собираем webapp (нужен dist для backend)
+RUN pnpm w build
 
-# ✅ СБОРКА WEBAPP (явно через tsc)
-RUN cd webapp && pnpm exec tsc -p tsconfig.json || echo "tsc failed, copying src instead"
+FROM node:20.18.0-alpine
 
-# ✅ СБОРКА BACKEND
-RUN cd backend && pnpm pgc
-RUN cd backend && pnpm build || true
+# Устанавливаем pnpm
+RUN npm install -g pnpm@8.15.4
 
-# ============ СТАДИЯ 2: ФИНАЛЬНЫЙ ОБРАЗ ============
-FROM node:18-alpine
+# Копируем workspace файлы
+COPY --from=0 /app/package.json /app/package.json
+COPY --from=0 /app/pnpm-lock.yaml /app/pnpm-lock.yaml
+COPY --from=0 /app/pnpm-workspace.yaml /app/pnpm-workspace.yaml
 
-RUN apk add --no-cache openssl
+# Копируем package.json для всех пакетов
+COPY --from=0 /app/webapp/package.json /app/webapp/package.json
+COPY --from=0 /app/backend/package.json /app/backend/package.json
+COPY --from=0 /app/shared/package.json /app/shared/package.json
+
+# Копируем ВСЕ исходники
+COPY --from=0 /app/backend/src /app/backend/src
+COPY --from=0 /app/shared/src /app/shared/src
+COPY --from=0 /app/webapp/src /app/webapp/src
+
+# Копируем tsconfig файлы
+COPY --from=0 /app/backend/tsconfig.json /app/backend/tsconfig.json
+COPY --from=0 /app/backend/tsconfig.build.json /app/backend/tsconfig.build.json
+COPY --from=0 /app/shared/tsconfig.json /app/shared/tsconfig.json
+COPY --from=0 /app/webapp/tsconfig.json /app/webapp/tsconfig.json
+COPY --from=0 /app/webapp/tsconfig.node.json /app/webapp/tsconfig.node.json
+
+# Копируем собранный webapp dist
+COPY --from=0 /app/webapp/dist /app/webapp/dist
+
+# Копируем prisma schema
+COPY --from=0 /app/backend/src/prisma /app/backend/src/prisma
 
 WORKDIR /app
 
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/backend ./backend
+# Устанавливаем ВСЕ зависимости (включая ts-node)
+RUN pnpm install --ignore-scripts --frozen-lockfile
 
-# ✅ Копируем webapp целиком (включая dist, если есть)
-COPY --from=builder /app/webapp ./webapp
+# Генерируем Prisma client
+RUN pnpm b pgc
 
-# ✅ Копируем shared
-COPY --from=builder /app/shared/dist /app/shared/src
-COPY --from=builder /app/shared/package.json /app/shared/
+ARG SOURCE_VERSION
+ENV SOURCE_VERSION=$SOURCE_VERSION
 
-# ✅ Создаём symlink
-RUN mkdir -p /app/node_modules/@ideanick && \
-    ln -s /app/webapp /app/node_modules/@ideanick/webapp && \
-    ln -s /app/shared /app/node_modules/@ideanick/shared && \
-    ln -s /app/node_modules/.pnpm/zod@3.25.76/node_modules/zod /app/node_modules/zod && \
-    ln -s /app/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash /app/node_modules/lodash
-
-WORKDIR /app/backend
-
-EXPOSE 3000
-
-CMD ["node", "dist/index.js"]
+CMD pnpm b pmp && pnpm b start

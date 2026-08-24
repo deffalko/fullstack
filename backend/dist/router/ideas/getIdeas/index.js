@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getIdeasTrpcRoute = void 0;
 const trpc_1 = require("../../../lib/trpc");
 const input_1 = require("./input");
-const omit_1 = require("@ideanick/shared/dist/omit");
+const omit_1 = require("@ideanick/shared/src/omit");
 exports.getIdeasTrpcRoute = trpc_1.trpcLoggedProcedure.input(input_1.zGetIdeasTrpcInput).query(async ({ ctx, input }) => {
     // 1. Очищаем поисковый запрос
     const search = input.search?.trim() || '';

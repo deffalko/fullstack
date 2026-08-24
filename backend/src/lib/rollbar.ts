@@ -97,3 +97,5 @@ export const getRollbarInstance = () => rollbarInstance
 
 // Для обратной совместимости
 export default rollbarInstance
+
+

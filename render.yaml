@@ -1,11 +1,32 @@
 services:
   - type: web
-    name: ideanick-backend
-    runtime: node
-    rootDir: .
-    buildCommand: |
-      rm -rf backend/node_modules/@ideanick
-      mkdir -p backend/node_modules/@ideanick
-      cp -r shared/dist backend/node_modules/@ideanick/shared
-      npm install --legacy-peer-deps --ignore-scripts
-    startCommand: node backend/dist/index.js
+    name: ideanick
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /ping
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ideanick-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: SENTRY_DSN
+        sync: false
+      - key: ROLLBAR_ACCESS_TOKEN
+        sync: false
+
+databases:
+  - name: ideanick-db
+    databaseName: ideanick
+    user: ideanick
+    plan: free

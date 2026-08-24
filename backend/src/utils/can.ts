@@ -14,3 +14,5 @@ export const canBlockIdeas = (user: MaybeUser) => {
 export const canEditIdea = (user: MaybeUser, idea: MaybeIdea) => {
   return !!user && !!idea && user?.id === idea?.authorId
 }
+
+

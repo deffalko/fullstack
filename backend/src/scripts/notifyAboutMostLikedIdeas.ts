@@ -50,3 +50,5 @@ export const notifyAboutMostLikedIdeas = async ({
     await sendMostLikedIdeasEmail({ user, ideas: mostLikedIdeas })
   }
 }
+
+
